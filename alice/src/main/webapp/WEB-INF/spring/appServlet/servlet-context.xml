@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee 
+		http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<context:property-placeholder
+		location="classpath:com/alice/app/mybatis/database.properties" />
+		
+	<!-- datasource -->
+	<beans:bean id="dataSource1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method='close'>
+		<beans:property name="driverClassName" value="${jdbc1.driverClass}" />
+		<beans:property name="url" value="${jdbc1.url}" />
+		<beans:property name="username" value="${jdbc1.username}" />
+		<beans:property name="password" value="${jdbc1.password}" />		
+		<beans:property name="initialSize" value="10" /> <!-- 커넥션 풀이 처음 생성되는 갯수(default 0 or 10) -->
+		<beans:property name="maxActive" value="50" /> <!-- 동시에 할당할 수 있는 커넥션 최대 갯수(default 8 or 100) -->
+		<beans:property name="maxIdle" value="20" /> <!-- 커넥션 풀에 남겨놓을 수 있는 유휴 커넥션의 최대 갯수(default 8 or 100) -->
+		<beans:property name="minIdle" value="10" /> <!-- 커넥션 풀에 남겨놓을 수 있는 유휴 커넥션의 최소 갯수(default 0 or 10) -->
+		<beans:property name="maxWait" value="5000" /> <!-- 모든 Connection이 사용중일 경우 최대 대기 시간(밀리세컨즈)(default 30000) -->
+		<beans:property name="validationQuery" value="SELECT 1 FROM DUAL" /> <!-- 커넥션 사용하기 전 유효성 검증쿼리(default null) -->
+		<beans:property name="testOnBorrow" value="true" /> <!-- 커넥션 풀에서 커넥션을 가져올 때 커넥션 유효한지 검사여부(default false) -->
+		<beans:property name="testWhileIdle" value="true" /> <!--유휴 커넥션 대상으로 검증쿼리를 수행하여 문제가 발생할 경우 풀에서 제거(default false) -->
+		<beans:property name="timeBetweenEvictionRunsMillis" value="3000" /> <!-- 누수 커넥션에 대한 풀 청소기 주기(밀리세컨즈)(default 5000) -->
+		<beans:property name="minEvictableIdleTimeMillis" value="30000" /> <!-- 이 시간이 지난 유휴 커넥션 대상으로 minIdle 수에 도달할 때까지 풀에서 제거(default 60000) -->
+		<beans:property name="poolPreparedStatements" value="true" /> <!-- 변수만 변경되는 동일한 쿼리를 캐쉬해서 성능 향상(default true)  -->
+		<beans:property name="removeAbandoned" value="true" /> <!-- 유실 검출 여부(default false) -->
+		<beans:property name="removeAbandonedTimeout" value="30" /> <!-- 커넥션 이후 얼마나 지나야 유실 처리할지 결정하는 시간(초단위)(default 60) -->
+	</beans:bean>
+	
+	<beans:bean id="transactionManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<beans:property name="dataSource" ref="dataSource1"/>
+	</beans:bean>
+	
+	<!-- mybatis -->
+	<beans:bean id="sqlSessionFactory1" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<beans:property name="dataSource" ref="dataSource1" />
+		<beans:property name="mapperLocations"
+			value="classpath:com/alice/app/mybatis/*_mapper.xml" />
+		<beans:property name="configLocation"
+			value="classpath:com/alice/app/mybatis/configurer.xml" />
+	</beans:bean>
+
+	<beans:bean id="sqlSessionTemplete1" class="org.mybatis.spring.SqlSessionTemplate">
+		<beans:constructor-arg ref="sqlSessionFactory1" />
+	</beans:bean>
+	
+	<!-- tiles -->
+	<beans:bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<beans:property name="definitions">
+			<beans:list>
+				<beans:value>/WEB-INF/tiles/default-layout.xml</beans:value>
+				<beans:value>/WEB-INF/tiles/user-layout.xml</beans:value>
+				<beans:value>/WEB-INF/tiles/admin-layout.xml</beans:value>
+			</beans:list>
+		</beans:property>
+		<beans:property name="preparerFactoryClass"
+			value="org.springframework.web.servlet.view.tiles3.SpringBeanPreparerFactory" />
+	</beans:bean>
+
+	<beans:bean id="viewResolver"
+		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<beans:property name="viewClass"
+			value="org.springframework.web.servlet.view.tiles3.TilesView" />
+	</beans:bean>
+	
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="com.alice.app" />	
+	
+</beans:beans>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" 
+"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<!-- layout -->
+	<definition name="default_layout" template="/WEB-INF/views/layout_default/layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/layout_default/header.jsp" />
+		<put-attribute name="navigation" value="/WEB-INF/views/layout_default/navigation.jsp" />
+		<put-attribute name="aside" value="/WEB-INF/views/layout_default/aside.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/views/layout_default/footer.jsp" />
+	</definition>
+	
+	<definition name="board_list1" template="/WEB-INF/views/board/list.jsp" />
+	
+	<!-- board -->
+	<definition name="board_list" extends="default_layout">
+		<put-attribute name="active" type="string" value="2_0" cascade="true" />
+		<put-attribute name="title" value="Board" type="string" />
+		<put-attribute name="content"
+			value="/WEB-INF/views/board/list.jsp" />
+	</definition>
+	
+	<definition name="board_view" extends="default_layout">
+		<put-attribute name="active" type="string" value="2_0" cascade="true" />
+		<put-attribute name="title" value="Board" type="string" />
+		<put-attribute name="content"
+			value="/WEB-INF/views/board/view.jsp" />
+	</definition>
+	
+	<!-- photo -->
+	<definition name="photo_list" extends="default_layout">
+		<put-attribute name="active" type="string" value="3_0" cascade="true" />
+		<put-attribute name="title" value="Photo" type="string" />
+		<put-attribute name="content"
+			value="/WEB-INF/views/photo/list.jsp" />
+	</definition>
+	
+	<definition name="photo_view" extends="default_layout">
+		<put-attribute name="active" type="string" value="3_0" cascade="true" />
+		<put-attribute name="title" value="Photo" type="string" />
+		<put-attribute name="content"
+			value="/WEB-INF/views/photo/view.jsp" />
+	</definition>
+
+</tiles-definitions>

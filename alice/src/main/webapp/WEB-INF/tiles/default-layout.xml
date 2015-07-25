@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" 
+"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<!-- error -->
+	<definition name="error" template="/WEB-INF/views/error/error.jsp"/>
+	
+	<definition name="error.404" extends="error">
+		<put-attribute name="message" type="string" value="현재 페이지 준비중 입니다."/>
+	</definition>
+	
+	<definition name="error.400" extends="error">
+		<put-attribute name="message" type="string" value="잘못된 요청입니다."/>
+	</definition>
+	
+	<definition name="error.500" extends="error">
+		<put-attribute name="message" type="string" value="웹서버 혹은 데이터베이스 오류입니다."/>
+	</definition>
+
+</tiles-definitions>
